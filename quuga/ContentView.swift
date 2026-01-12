@@ -11,7 +11,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Spacer()
-            navigator()
+            Navigator()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

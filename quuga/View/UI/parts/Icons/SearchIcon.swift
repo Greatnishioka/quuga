@@ -11,10 +11,14 @@ struct SearchIcon: Shape {
         var path = Path()
         let width = rect.size.width
         let height = rect.size.height
-        path.move(to: CGPoint(x: 0.75115*width, y: 0.74099*height))
-        path.addLine(to: CGPoint(x: 0.96723*width, y: 0.96789*height))
+        path.move(to: CGPoint(x: 0.95348*width, y: 0.98096*height))
+        path.addLine(to: CGPoint(x: 0.7374*width, y: 0.75407*height))
+        path.addLine(to: CGPoint(x: 0.7649*width, y: 0.72785*height))
+        path.addLine(to: CGPoint(x: 0.98097*width, y: 0.95474*height))
         path.closeSubpath()
-        path.move(to: CGPoint(x: 0, y: 0.41131*height))
+        path.move(to: CGPoint(x: 0.41104*width, y: 0.84166*height))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 0.41104*width, y: 0.01896*height))
         path.closeSubpath()
         return path
     }

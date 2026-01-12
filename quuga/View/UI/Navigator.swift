@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct navigator: View {
+struct Navigator: View {
     var body: some View {
         GeometryReader { geometry in
 
@@ -19,6 +19,7 @@ struct navigator: View {
                     // 1. 背景色
                     shape
                         .fill(Color.white)
+                        .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.3), radius: 4)
                     
                     // 2. Stripe
                     Stripe()
@@ -108,5 +109,5 @@ struct navigator: View {
 }
 
 #Preview {
-    navigator()
+    Navigator()
 }
