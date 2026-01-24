@@ -9,11 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Spacer()
-            Navigator()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        HomeView()
     }
 }
 

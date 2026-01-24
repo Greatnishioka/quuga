@@ -14,9 +14,9 @@ final class VideoPlaybackController: ObservableObject {
     @Published private(set) var isPlaying = false
 
     private var player: AVPlayer?
-    private var currentVideoID: Int?
+    private var currentVideoID: String?
 
-    func play(videoID: Int, url: URL) {
+    func play(videoID: String, url: URL) {
         if currentVideoID != videoID {
             stop()
             player = AVPlayer(url: url)
