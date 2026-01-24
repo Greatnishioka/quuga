@@ -8,21 +8,6 @@
 import SwiftUI
 import AVFoundation
 
-private struct DemoVideosResponse: Decodable {
-    struct Payload: Decodable {
-        let videos: [DemoVideo]
-    }
-
-    let status: Int
-    let data: Payload
-}
-
-private struct DemoVideo: Identifiable, Decodable, Equatable {
-    let id: String
-    let title: String
-    let url: URL
-}
-
 private final class PlayerContainerView: UIView {
     override static var layerClass: AnyClass {
         AVPlayerLayer.self
@@ -46,17 +31,13 @@ private struct VideoPlayerLayerView: UIViewRepresentable {
 }
 
 struct SwipingVideoPlayerBehavior: View {
-    @State private var videos: [Video] = []
-    @State private var isLoading = false
-    @State private var errorMessage: String?
+    @StateObject private var viewModel = SwipingVideoPlayerViewModel()
     @StateObject private var playbackController = VideoPlaybackController()
-
-    private let endpoint = URL(string: "https://quuga-be.nishiokaayato-6e8.workers.dev/demo_videos")!
 
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
-                ForEach(videos) { video in
+                ForEach(viewModel.videos) { video in
                     ZStack {
                         VideoPlayerLayerView(playbackController: playbackController)
                             .containerRelativeFrame([.horizontal, .vertical])
@@ -90,10 +71,10 @@ struct SwipingVideoPlayerBehavior: View {
         .scrollTargetBehavior(.paging)
         .ignoresSafeArea()
         .task {
-            await loadVideos()
+            await viewModel.loadVideos()
         }
         .overlay(alignment: .top) {
-            if let errorMessage {
+            if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
                     .font(.callout)
                     .foregroundStyle(.white)
@@ -104,49 +85,7 @@ struct SwipingVideoPlayerBehavior: View {
             }
         }
     }
-
-    @MainActor
-    private func loadVideos() async {
-        guard !isLoading else { return }
-        isLoading = true
-        errorMessage = nil
-
-        defer { isLoading = false }
-
-        do {
-            // fetchを行なっている
-            let (data, response) = try await URLSession.shared.data(from: endpoint)
-
-            // ここは200だけしか判定しないようにする
-            guard let http = response as? HTTPURLResponse,
-                  (200..<300).contains(http.statusCode) else {
-                throw URLError(.badServerResponse)
-            }
-
-            let decoded = try JSONDecoder().decode(DemoVideosResponse.self, from: data)
-            let now = Date()
-            let author = UserSummary(id: "demo", name: "Demo", avatarURL: nil)
-            videos = decoded.data.videos.map { demoVideo in
-                Video(
-                    id: demoVideo.id,
-                    videoURL: demoVideo.url,
-                    duration: 0,
-                    aspectRatio: 9.0 / 16.0,
-                    author: author,
-                    title: demoVideo.title,
-                    description: nil,
-                    createdAt: now,
-                    viewCount: 0,
-                    likeCount: 0,
-                    isLiked: false,
-                    templateID: nil,
-                    isProVideo: false
-                )
-            }
-        } catch {
-            errorMessage = "動画の取得に失敗しました。"
-        }
-    }
+    // loadVideos moved to ViewModel
 }
 
 #Preview {
